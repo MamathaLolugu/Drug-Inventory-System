@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add New Drug</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'inventory/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Add New Drug</h1>
+        </header>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Drug Name:</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Batch Number:</label>
+                <input type="text" name="batch_no" required>
+            </div>
+            <div class="form-group">
+                <label>Expiry Date:</label>
+                <input type="date" name="expiry" required>
+            </div>
+            <div class="form-group">
+                <label>Quantity:</label>
+                <input type="number" name="quantity" required>
+            </div>
+            <div class="form-group">
+                <label>Supplier:</label>
+                <input type="text" name="supplier" required>
+            </div>
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" name="location" required>
+            </div>
+            <button type="submit" class="btn">Add Drug</button>
+        </form>
+
+        <p><a href="{% url 'main_dashboard' %}">← Back to Dashboard</a></p>
+    </div>
+</body>
+</html>

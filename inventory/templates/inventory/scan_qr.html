@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Scan QR Code - Drug Inventory</title>
+    <link rel="stylesheet" href="{% static 'inventory/style.css' %}">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        input[type="text"], input[type="file"] {
+            width: 80%;
+            padding: 8px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Scan or Upload QR Code</h1>
+        <p>Point your camera at the medicine QR code or upload an image</p>
+
+        <!-- Live camera scanner -->
+        <div id="qr-reader" style="width: 300px; margin: 20px auto;"></div>
+
+        <!-- Manual QR input -->
+        <input type="text" id="qr-text" placeholder="Paste QR text here">
+        <br>
+        <button id="submit-qr" class="btn">Check Medicine</button>
+        <br><br>
+
+        <!-- File upload -->
+        <input type="file" id="qr-file" accept="image/*">
+        <button id="check-qr" class="btn">Check Uploaded QR</button>
+
+        <!-- Result -->
+        <div id="result"></div>
+
+        <a href="{% url 'main_dashboard' %}">← Back to Dashboard</a>
+    </div>
+
+    <!-- JS for QR scanning & AJAX -->
+    <script>
+        // Live camera scanner
+        function onScanSuccess(decodedText, decodedResult) {
+            processQR(decodedText);
+        }
+
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader", { fps: 10, qrbox: 250 }
+        );
+        html5QrcodeScanner.render(onScanSuccess);
+
+        // Function to send QR text to Django
+        function processQR(qrText) {
+            let formData = new FormData();
+            formData.append("qr_text", qrText);
+
+            fetch("{% url 'scan_qr' %}", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if(data.status === "success") {
+                    resultDiv.innerHTML = `
+                        <h3 style="color:green">Medicine Available ✅</h3>
+                        <p><strong>Name:</strong> ${data.name}</p>
+                        <p><strong>Batch:</strong> ${data.batch_no}</p>
+                        <p><strong>Quantity:</strong> ${data.quantity}</p>
+                        <p><strong>Location:</strong> ${data.location}</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<h3 style="color:red">Medicine Not Found ❌</h3><p>${data.message}</p>`;
+                }
+            })
+            .catch(err => {
+                document.getElementById('result').innerHTML = `<p style="color:red;">Error: ${err}</p>`;
+            });
+        }
+
+        // Manual input button
+        document.getElementById('submit-qr').addEventListener('click', function() {
+            const qrText = document.getElementById('qr-text').value.trim();
+            if(qrText) processQR(qrText);
+        });
+
+        // File upload button
+        document.getElementById('check-qr').addEventListener('click', function() {
+            const fileInput = document.getElementById('qr-file');
+            if(fileInput.files.length === 0) {
+                alert("Please choose a file!");
+                return;
+            }
+            const formData = new FormData();
+            formData.append("qr_file", fileInput.files[0]);
+
+            fetch("{% url 'scan_qr' %}", {
+                method: "POST",
+                body: formData,
+            })
+            .then(res => res.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if(data.status === "success") {
+                    resultDiv.innerHTML = `<h3 style="color:green">Medicine Available ✅</h3>
+                        <p><strong>Name:</strong> ${data.name}</p>
+                        <p><strong>Batch:</strong> ${data.batch_no}</p>
+                        <p><strong>Quantity:</strong> ${data.quantity}</p>
+                        <p><strong>Location:</strong> ${data.location}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<h3 style="color:red">Medicine Not Found ❌</h3>
+                        <p>${data.message}</p>`;
+                }
+            })
+            .catch(err => {
+                document.getElementById('result').innerHTML = `<p style="color:red;">Error: ${err}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>

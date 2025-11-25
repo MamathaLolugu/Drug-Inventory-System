@@ -1,0 +1,194 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+header {
+    padding: 60px 20px 40px 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.8em;
+    color: #333;
+}
+
+header p {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #555;
+}
+
+.dashboard-cards {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 50px;
+}
+
+.card {
+    width: 220px;
+    height: 140px;
+    background-color: #4CAF50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    background-color: #45a049;
+}
+
+.card a {
+    color: white;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+form {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin: 0 auto 50px auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+.btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: #45a049;
+}
+
+form p a {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+form p a:hover {
+    text-decoration: underline;
+}
+.history-table {
+    width: 90%;
+    max-width: 900px;
+    margin: 0 auto 50px auto;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.history-table th, .history-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.history-table th {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+.history-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.history-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.no-data {
+    text-align: center;
+    font-size: 1.1em;
+    color: #555;
+    margin-top: 50px;
+}
+
+.history-table + p a {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.history-table + p a:hover {
+    text-decoration: underline;
+}
+.qr-section {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin: 0 auto 50px auto;
+    text-align: center;
+}
+
+.qr-section input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+}
+
+.qr-result {
+    margin-top: 20px;
+    font-size: 1.1em;
+    color: #333;
+}

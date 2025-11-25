@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drug Inventory Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'inventory/style.css' %}">
+</head>
+<body>
+    <h1>Drug Inventory Dashboard</h1>
+    <div style="text-align:center;">
+        <a href="{% url 'add_drug' %}">Add Drug</a>
+        <a href="{% url 'movement_history' %}">Movement History</a>
+        <a href="{% url 'scan_qr' %}">Scan QR</a>
+    </div>
+    
+    <h2>All Drugs</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Batch No</th>
+            <th>Expiry</th>
+            <th>Quantity</th>
+            <th>Location</th>
+            <th>Supplier</th>
+        </tr>
+        {% for drug in drugs %}
+        <tr>
+            <td>{{ drug.name }}</td>
+            <td>{{ drug.batch_no }}</td>
+            <td>{{ drug.expiry_date }}</td>
+            <td {% if drug.quantity < 10 %} class="low-stock" {% endif %}>{{ drug.quantity }}</td>
+            <td>{{ drug.location }}</td>
+            <td>{{ drug.supplier }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Low Stock Drugs</h2>
+    <ul>
+        {% for drug in low_stock %}
+            <li>{{ drug.name }} - {{ drug.quantity }} units</li>
+        {% empty %}
+            <li>No low stock drugs.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

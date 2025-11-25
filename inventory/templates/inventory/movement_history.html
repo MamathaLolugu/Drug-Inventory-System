@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movement History</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'inventory/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Movement History</h1>
+        </header>
+
+        {% if movements %}
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Drug Name</th>
+                    <th>Movement Type</th>
+                    <th>Quantity</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movement in movements %}
+                <tr>
+                    <td>{{ movement.drug.name }}</td>
+                    <td>{{ movement.movement_type }}</td>
+                    <td>{{ movement.quantity }}</td>
+                    <td>{{ movement.timestamp|date:"d M Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="no-data">No movement history available.</p>
+        {% endif %}
+
+        <p><a href="{% url 'main_dashboard' %}">← Back to Dashboard</a></p>
+    </div>
+</body>
+</html>

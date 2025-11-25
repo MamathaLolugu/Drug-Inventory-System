@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drug Inventory System</title>
+    <link rel="stylesheet" href="{% static 'inventory/style.css' %}">
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        p.description {
+            color: #555;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+
+        .sections {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .section-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            flex: 1 1 150px;
+            max-width: 200px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .section-btn:hover {
+            background: #0056b3;
+        }
+
+        #qr-container {
+            background: white;
+            max-width: 600px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+        }
+
+        #qr-reader {
+            width: 300px;
+            margin: 20px auto;
+        }
+
+        input[type="file"] {
+            margin-top: 20px;
+            padding: 8px;
+        }
+
+        #upload-qr {
+            margin-top: 10px;
+            background: #28a745;
+            border-radius: 5px;
+        }
+
+        #upload-qr:hover {
+            background: #1e7e34;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        a.back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a.back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Drug Inventory System</h1>
+        <p class="description">Welcome to Drug Inventory System</p>
+
+        <!-- Main Sections -->
+        <div class="sections">
+            <a href="{% url 'add_drug' %}" class="section-btn">Add Drug</a>
+            <a href="{% url 'movement_history' %}" class="section-btn">Movement History</a>
+            <a href="#qr-container" class="section-btn">Scan QR</a>
+            <a href="/admin/" target="_blank" class="section-btn">Admin Panel</a>
+         
+        </div>
+
+        <!-- QR Scanner + Upload -->
+        <div id="qr-container">
+            <h2>Scan or Upload QR Code</h2>
+            <p>Point your camera at the medicine QR code or upload an image</p>
+
+            <!-- Live Scanner -->
+            <div id="qr-reader"></div>
+
+            <!-- Upload Image -->
+            <input type="file" id="qr-file" accept="image/*">
+            <button id="upload-qr" class="section-btn">Check Uploaded QR</button>
+
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <!-- JS for QR scanning & AJAX -->
+    <script>
+        // Live camera scanning
+        function onScanSuccess(decodedText, decodedResult) {
+            processQR(decodedText);
+        }
+
+        let html5QrcodeScanner = new Html5QrcodeScanner(
+            "qr-reader",
+            { fps: 10, qrbox: 250 }
+        );
+        html5QrcodeScanner.render(onScanSuccess);
+
+        // Process QR text
+        function processQR(qrText) {
+            let formData = new FormData();
+            formData.append("qr_text", qrText);
+
+            fetch("{% url 'scan_qr' %}", { method: "POST", body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('result');
+                    if(data.status === "success"){
+                        resultDiv.innerHTML = `<span style="color:green;">✅ Medicine Available</span><br>
+                            <strong>${data.name}</strong><br>
+                            Batch: ${data.batch_no}<br>
+                            Quantity: ${data.quantity}<br>
+                            Location: ${data.location}`;
+                    } else {
+                        resultDiv.innerHTML = `<span style="color:red;">❌ Medicine Not Found</span><br>${data.message}`;
+                    }
+                })
+                .catch(err => { document.getElementById('result').innerHTML = `<span style="color:red;">Error: ${err}</span>`; });
+        }
+
+        // Handle QR image upload
+        document.getElementById('upload-qr').addEventListener('click', () => {
+            const file = document.getElementById('qr-file').files[0];
+            if(!file) return alert("Select a QR code image!");
+
+            const reader = new FileReader();
+            reader.onload = function() {
+                Html5Qrcode.getCameras().then(cameras => {
+                    Html5Qrcode.getQrcodeScanner().scanFile(file, true)
+                        .then(decodedText => { processQR(decodedText); })
+                        .catch(err => { document.getElementById('result').innerHTML = `<span style="color:red;">Invalid QR Image</span>`; });
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>
