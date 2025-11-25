@@ -31,3 +31,11 @@ python manage.py migrate
 ```
 Purpose:
 Designed to help pharmacies and healthcare providers efficiently manage inventories, track drug movements, and verify drug authenticity, reducing errors and improving transparency.
+
+👩‍💻 Developer Information
+
+Developer: Mamatha Lolugu
+
+GitHub:https://github.com/MamathaLolugu
+
+Linkedin:https://www.linkedin.com/in/mamathalolugu
